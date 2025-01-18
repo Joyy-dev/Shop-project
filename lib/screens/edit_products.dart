@@ -16,9 +16,9 @@ class _EditProductsState extends State<EditProducts> {
   final _imageUrlFocusMode = FocusNode();
   final _form = GlobalKey<FormState>();
   var _editedProduct = Product(
-    id: null, 
+    id: '', 
     title: '', 
-    description: '', 
+    description: '',
     price: 0, 
     imageURL: ''
   );
@@ -47,14 +47,13 @@ class _EditProductsState extends State<EditProducts> {
       });
     }
   }
-
   void _saveForm() {
-    final isValid = _form.currentState?.validate();
-    if (!isValid!) {
+    final isValid = _form.currentState!.validate();
+    if (!isValid) {
       return;
     }
-    _form.currentState?.save();
- }
+    _form.currentState!.save();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,6 +93,12 @@ class _EditProductsState extends State<EditProducts> {
                     imageURL: _editedProduct.imageURL
                   );
                 },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a value for your title';
+                  }
+                  return null;
+                }
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -114,6 +119,18 @@ class _EditProductsState extends State<EditProducts> {
                     imageURL: _editedProduct.imageURL
                   );
                 },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a price for your product';
+                  }
+                  if (double.tryParse(value) == null) {
+                    return 'Please enter a valid number for your price';
+                  }
+                  if (double.parse(value) <= 0) {
+                    return 'Please enter a valid positive number for your price';
+                  }
+                  return null;
+                },
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -122,6 +139,12 @@ class _EditProductsState extends State<EditProducts> {
                 maxLength: 2,
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.multiline,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a description for your product';
+                  }
+                  return null;
+                },
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -137,26 +160,30 @@ class _EditProductsState extends State<EditProducts> {
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Image'
+                    Expanded(
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Image'
+                        ),
+                        textInputAction: TextInputAction.done,
+                        keyboardType: TextInputType.url,
+                        controller: _imageUrlController,
+                        focusNode: _imageUrlFocusMode,
+                        onFieldSubmitted: (_) {
+                          _saveForm();
+                        },
+                        onSaved: (value) {
+                          _editedProduct = Product(
+                            id: _editedProduct.id, 
+                            title: _editedProduct.title, 
+                            description: _editedProduct.description, 
+                            price: _editedProduct.price, 
+                            imageURL: value!
+                          );
+                        },
                       ),
-                      textInputAction: TextInputAction.done,
-                      keyboardType: TextInputType.url,
-                      controller: _imageUrlController,
-                      focusNode: _imageUrlFocusMode,
-                      onSaved: (value) {
-                        _editedProduct = Product(
-                          id: _editedProduct.id, 
-                          title: _editedProduct.title, 
-                          description: _editedProduct.description, 
-                          price: _editedProduct.price, 
-                          imageURL: value!
-                        );
-                      },
                     ),
-                  )
+
                 ],
               )
             ],
