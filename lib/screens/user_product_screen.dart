@@ -29,12 +29,18 @@ class UserProductScreen extends StatelessWidget {
       drawer: const AppDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: ListView.builder(
+        child: Consumer<Products>(
+          builder: (context, productData, _) {
+            return productData.items.isEmpty 
+            ? const Center(child: Text('No products found'))
+          : ListView.builder(
           itemCount: productData.items.length,
           itemBuilder: (_, i) => UserProduct(
             productData.items[i].title,
             productData.items[i].imageURL
           ),
+          );
+          }
         ),
       ),
     );

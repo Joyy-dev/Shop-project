@@ -42,11 +42,17 @@ class _EditProductsState extends State<EditProducts> {
 
   void _updateImageUrl() {
     if (!_imageUrlFocusMode.hasFocus) {
-      setState(() {
-        
-      });
+      if (!(_imageUrlController.text.startsWith('http') && 
+        _imageUrlController.text.startsWith('https')) ||
+        !(_imageUrlController.text.endsWith('.png') || 
+        _imageUrlController.text.endsWith('.jpg') || 
+        _imageUrlController.text.endsWith('.jpeg'))) {
+        return;
+      }
+      setState(() {});
     }
   }
+
   void _saveForm() {
     final isValid = _form.currentState!.validate();
     if (!isValid) {
@@ -143,6 +149,9 @@ class _EditProductsState extends State<EditProducts> {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a description for your product';
                   }
+                  if (value.length < 10) {
+                    return 'Please enter a value with at least 10 character long';
+                  }
                   return null;
                 },
               ),
@@ -181,13 +190,26 @@ class _EditProductsState extends State<EditProducts> {
                             imageURL: value!
                           );
                         },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a valid imageUrl';
+                          }
+                          if (!value.startsWith('http') && !value.startsWith('https')) {
+                            return 'Url does not contain http or https';
+                          }
+                          if (!value.endsWith('.png') && !value.endsWith('.jpg') && !value.endsWith('.jpeg')) {
+                            return 'Url is not in .jpg, or .png, or .jpeg format';
+                          }
+                          return null;
+                        },
                       ),
                     ),
 
                 ],
               )
             ],
-          )),
+          )
+        ),
       )
     );
   }
