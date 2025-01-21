@@ -25,10 +25,36 @@ class _EditProductsState extends State<EditProducts> {
     imageURL: ''
   );
 
+  var _initValues = {
+    'title': '',
+    'description': '',
+    'price': '',
+    'imageURL': '',
+  };
+  var _isInit = true;
+
   @override
   void initState() {
     _imageUrlFocusMode.addListener(_updateImageUrl);
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final productid = ModalRoute.of(context)!.settings.arguments as String;
+      if (productid != '') {
+        _editedProduct = Provider.of<Products>(context, listen: false).findById(productid);
+        _initValues = {
+          'title': _editedProduct.title,
+          'description': _editedProduct.description,
+          'price': _editedProduct.price.toString(),
+          'imageURL': _editedProduct.imageURL,
+        };
+      }
+    }
+    _isInit = false;
+    super.didChangeDependencies();
   }
 
   @override
@@ -40,7 +66,6 @@ class _EditProductsState extends State<EditProducts> {
     _imageUrlFocusMode.dispose();
     super.dispose();
   }
-
 
   void _updateImageUrl() {
     if (!_imageUrlFocusMode.hasFocus) {
@@ -87,6 +112,7 @@ class _EditProductsState extends State<EditProducts> {
           child: ListView(
             children: [
               TextFormField(
+                initialValue: _initValues['title'],
                 decoration: const InputDecoration(
                   labelText: 'Title'
                 ),
@@ -111,6 +137,7 @@ class _EditProductsState extends State<EditProducts> {
                 }
               ),
               TextFormField(
+                initialValue: _initValues['price'],
                 decoration: const InputDecoration(
                   labelText: 'Price',
                 ),
@@ -143,6 +170,7 @@ class _EditProductsState extends State<EditProducts> {
                 },
               ),
               TextFormField(
+                initialValue: _initValues['description'],
                 decoration: const InputDecoration(
                   labelText: 'Description',
                 ),
@@ -175,6 +203,7 @@ class _EditProductsState extends State<EditProducts> {
                   ),
                     Expanded(
                       child: TextFormField(
+                        initialValue: _initValues['imageUrl'],
                         decoration: const InputDecoration(
                           labelText: 'Image'
                         ),

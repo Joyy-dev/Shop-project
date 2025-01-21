@@ -12,26 +12,30 @@ class UserProduct extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(title),
-      leading: CircleAvatar(
-        backgroundImage: NetworkImage(imageURL),
-      ),
-      trailing: Row(
-        children: [
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed(EditProducts.routeName);
-            }, 
-            icon: const Icon(Icons.edit)
-          ),
-          IconButton(
-            onPressed: () {
-              Provider.of<Products>(context, listen: false).deleteProduct(id);
-            }, 
-            icon: const Icon(Icons.delete)
-          )
-        ],
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListTile(
+          title: Text(title),
+          leading: CircleAvatar(backgroundImage: NetworkImage(imageURL),),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed(EditProducts.routeName);
+                }, 
+                icon: const Icon(Icons.edit, color: Colors.black,),
+              ),
+              IconButton(
+                onPressed: () {
+                  Provider.of<Products>(context, listen: false).deleteProduct(id);
+                }, 
+                icon: const Icon(Icons.delete, color: Colors.red,)
+              )
+            ],
+          ),      
+        ),
       ),
     );
   }

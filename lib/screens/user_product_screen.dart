@@ -27,9 +27,8 @@ class UserProductScreen extends StatelessWidget {
         ],
       ),
       drawer: const AppDrawer(),
-      body: Padding(
+      body: ListView.builder(
         padding: const EdgeInsets.all(8.0),
-        child: ListView.builder(
           itemCount: productData.items.length,
           itemBuilder: (_, i) => Column(
             children: [
@@ -40,7 +39,6 @@ class UserProductScreen extends StatelessWidget {
               ),
             ],
           ),
-        )
         )
       );
     }

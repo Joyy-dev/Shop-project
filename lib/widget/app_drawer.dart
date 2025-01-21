@@ -39,7 +39,7 @@ class AppDrawer extends StatelessWidget {
               Navigator.of(context).pushNamed(UserProductScreen.routeName);
             },
           ),
-          const Divider(),
+          const Divider()
         ],
       ),
     );
