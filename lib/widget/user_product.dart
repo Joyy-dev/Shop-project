@@ -23,7 +23,7 @@ class UserProduct extends StatelessWidget {
             children: [
               IconButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed(EditProducts.routeName);
+                  Navigator.of(context).pushNamed(EditProducts.routeName, arguments: id);
                 }, 
                 icon: const Icon(Icons.edit, color: Colors.black,),
               ),
