@@ -182,7 +182,7 @@ class _EditProductsState extends State<EditProducts> {
                 decoration: const InputDecoration(
                   labelText: 'Description',
                 ),
-                maxLength: 2,
+                maxLength: 5000,
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.multiline,
                 validator: (value) {
