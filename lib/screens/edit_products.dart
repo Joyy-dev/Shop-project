@@ -83,7 +83,7 @@ class _EditProductsState extends State<EditProducts> {
     }
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async{
     final isValid = _form.currentState!.validate();
     if (!isValid) {
       return;
@@ -99,9 +99,11 @@ class _EditProductsState extends State<EditProducts> {
       });
       Navigator.of(context).pop();
     } else {
-      Provider.of<Products>(context, listen: false).addProduct(_editedProduct)
-      .catchError((error) {
-        return showDialog(
+      try {
+      await Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+      }
+      catch (error) {
+        showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
             title: const Text('An error occurred!'),
@@ -111,18 +113,17 @@ class _EditProductsState extends State<EditProducts> {
                 onPressed: () {
                   Navigator.of(ctx).pop();
                 }, 
-                child: const Text('Close')
+                child: const Text('Okay')
               )
             ],
           )
         );
-      })
-      .then((_) {
+      } finally {
         setState(() {
           _isLoading = false;
         });
         Navigator.of(context).pop();
-      });
+      }
     }
     //Navigator.of(context).pop();
   }
@@ -218,6 +219,15 @@ class _EditProductsState extends State<EditProducts> {
                 maxLength: 5000,
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.multiline,
+                onSaved: (value) {
+                  _editedProduct = Product(
+                    id: _editedProduct.id, 
+                    title: _editedProduct.title, 
+                    description: value!, 
+                    price: _editedProduct.price, 
+                    imageURL: _editedProduct.imageURL
+                  );
+                },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a description for your product';

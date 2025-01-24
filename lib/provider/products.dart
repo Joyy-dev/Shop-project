@@ -61,9 +61,21 @@ class Products with ChangeNotifier{
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  Future<void>addProduct(Product product) {
+  Future<void> fetchAndSetProduct () async {
     const url = 'https://shop-app-3e5ac-default-rtdb.firebaseio.com/products.json';
-    return http.post(
+    try {
+    final response = await http.get(Uri.parse(url));
+    print(json.decode(response.body));
+  } catch (error) {
+    print('error');
+    throw error;
+  }
+  }
+
+  Future<void>addProduct(Product product) async {
+    const url = 'https://shop-app-3e5ac-default-rtdb.firebaseio.com/products.json';
+    try {
+    final response = await http.post(
       Uri.parse(url), 
       body: json.encode({
         'title': product.title,
@@ -72,7 +84,7 @@ class Products with ChangeNotifier{
         'imageURL': product.imageURL
       }
     )
-  ).then((response) {
+  );
     final responseData = json.decode(response.body);
     final newProduct = Product(
       id: responseData['name'], 
@@ -83,10 +95,10 @@ class Products with ChangeNotifier{
     );
     _items.add(newProduct);
     notifyListeners();
-  }).catchError((error) {
+  } catch (error) {
     print('error');
     throw error;
-  });}
+  }}
 
   void updateProduct(String id, Product newProduct) {
     final index = _items.indexWhere((prod) => prod.id == id);
