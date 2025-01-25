@@ -50,7 +50,7 @@ class _EditProductsState extends State<EditProducts> {
           'title': _editedProduct.title,
           'description': _editedProduct.description,
           'price': _editedProduct.price.toString(),
-          'imageURL': ''
+          'imageURL': '',
          // 'imageURL': _editedProduct.imageURL,
         };
         _imageUrlController.text = _editedProduct.imageURL;
@@ -225,7 +225,8 @@ class _EditProductsState extends State<EditProducts> {
                     title: _editedProduct.title, 
                     description: value!, 
                     price: _editedProduct.price, 
-                    imageURL: _editedProduct.imageURL
+                    imageURL: _editedProduct.imageURL,
+                    isFavorite: _editedProduct.isFavorite
                   );
                 },
                 validator: (value) {

@@ -4,8 +4,8 @@ import 'package:shop_project/provider/product.dart';
 import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier{
-  final List<Product> _items = [
-    Product(
+  List<Product> _items = [
+    /*Product(
         id: 'p1',
         title: 'Red Shirt',
         description: 'A red shirt - it is pretty red!',
@@ -46,7 +46,7 @@ class Products with ChangeNotifier{
         description: 'Easy to carry - what you need for your items', 
         price: 67.09, 
         imageURL: 'https://galaxybags.com.pk/cdn/shop/files/A_5_c6fbf910-bea1-40d0-a7f2-9c59b884123d.jpg?v=1709538087'
-      )
+      )*/
   ];
 
   List<Product> get items {
@@ -65,7 +65,21 @@ class Products with ChangeNotifier{
     const url = 'https://shop-app-3e5ac-default-rtdb.firebaseio.com/products.json';
     try {
     final response = await http.get(Uri.parse(url));
-    print(json.decode(response.body));
+    final extractedData = json.decode(response.body) as Map<String, dynamic>;
+    
+    final List<Product> loadedProducts = [];
+    extractedData.forEach((prodId, prodData) {
+      loadedProducts.add(Product(
+        id: prodId, 
+        title: prodData['title'], 
+        description: prodData['description'], 
+        price: prodData['price'], 
+        imageURL: prodData['imageURL'],
+        isFavorite: prodData['isFavorite'] ?? false
+      ));
+    }); 
+    _items = loadedProducts;
+    notifyListeners();
   } catch (error) {
     print('error');
     throw error;
