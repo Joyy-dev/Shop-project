@@ -93,17 +93,14 @@ class _EditProductsState extends State<EditProducts> {
       _isLoading = true;
     });
     if (_editedProduct.id != '') {
-      Provider.of<Products>(context, listen: false).updateProduct(_editedProduct.id, _editedProduct);
-      setState(() {
-        _isLoading = false;
-      });
+      await Provider.of<Products>(context, listen: false).updateProduct(_editedProduct.id, _editedProduct);
       Navigator.of(context).pop();
     } else {
       try {
       await Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
       }
       catch (error) {
-        showDialog(
+        await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
             title: const Text('An error occurred!'),
@@ -118,13 +115,16 @@ class _EditProductsState extends State<EditProducts> {
             ],
           )
         );
-      } finally {
+      } /*finally {
         setState(() {
           _isLoading = false;
         });
         Navigator.of(context).pop();
-      }
+      }*/
     }
+    setState(() {
+      _isLoading = false;
+    });
     //Navigator.of(context).pop();
   }
 
