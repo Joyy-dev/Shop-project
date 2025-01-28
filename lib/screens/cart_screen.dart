@@ -39,22 +39,8 @@ class CartScreen extends StatelessWidget {
                   ),),
                   backgroundColor: Colors.black,
                 ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    textStyle: const TextStyle(
-                      fontSize: 18,
-                    ),
-                    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20),))
-                  ),
-                  onPressed: () {
-                    Provider.of<Order>(context, listen: false).addOrder(
-                      cart.items.values.toList(), 
-                      cart.totalAmount
-                    );
-                    cart.clear();
-                  }, 
-                  child: const Text('Order Now'))
+                const SizedBox(width: 8,),
+                OrderNowButton(cart: cart)
                 ],
               ),
             ),
@@ -74,6 +60,49 @@ class CartScreen extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+class OrderNowButton extends StatefulWidget {
+  const OrderNowButton({
+    super.key,
+    required this.cart,
+  });
+
+  final Cart cart;
+
+  @override
+  State<OrderNowButton> createState() => _OrderNowButtonState();
+}
+
+class _OrderNowButtonState extends State<OrderNowButton> {
+  var _isloading = false;
+  
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.black,
+        textStyle: const TextStyle(
+          fontSize: 18,
+        ),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20),))
+      ),
+      onPressed: (widget.cart.totalAmount <= 0 || _isloading) ? null : () async {
+        setState(() {
+          _isloading = true;
+        });
+        await Provider.of<Order>(context, listen: false).addOrder(
+          widget.cart.items.values.toList(), 
+          widget.cart.totalAmount
+        );
+        setState(() {
+          _isloading = false;
+        });
+        widget.cart.clear();
+      }, 
+      child: _isloading ? const CircularProgressIndicator() : const Text('Order Now')
     );
   }
 }

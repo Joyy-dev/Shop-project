@@ -66,7 +66,10 @@ class Products with ChangeNotifier{
     const url = 'https://shop-app-3e5ac-default-rtdb.firebaseio.com/products.json';
     try {
     final response = await http.get(Uri.parse(url));
-    final extractedData = json.decode(response.body) as Map<String, dynamic>;
+    final extractedData = json.decode(response.body) as Map<String, dynamic>?;
+    if (extractedData == null) {
+      return;
+    }
     
     final List<Product> loadedProducts = [];
     extractedData.forEach((prodId, prodData) {
@@ -83,11 +86,11 @@ class Products with ChangeNotifier{
     notifyListeners();
   } catch (error) {
     print('error');
-    throw error;
+    rethrow;
   }
   }
 
-  Future<void>addProduct(Product product) async {
+  Future<void> addProduct(Product product) async {
     const url = 'https://shop-app-3e5ac-default-rtdb.firebaseio.com/products.json';
     try {
     final response = await http.post(
