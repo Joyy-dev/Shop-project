@@ -25,7 +25,7 @@ class Order with ChangeNotifier {
   }
 
   Future<void> fetchAndAddOrder() async {
-    const url = 'https://shop-app-3e5ac-default-rtdb.firebaseio.com/products.json';
+    const url = 'https://shop-app-3e5ac-default-rtdb.firebaseio.com/orders.json';
     try {
       final response = await http.get(Uri.parse(url));
       final extractedData = json.decode(response.body) as Map<String, dynamic>?;
