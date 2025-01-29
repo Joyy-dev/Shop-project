@@ -115,7 +115,7 @@ class Products with ChangeNotifier{
     notifyListeners();
   } catch (error) {
     print('error');
-    throw error;
+    rethrow;
   }}
 
   Future<void> updateProduct(String id, Product newProduct) async {

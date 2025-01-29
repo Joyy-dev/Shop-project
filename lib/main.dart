@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop_project/provider/cart.dart';
 import 'package:shop_project/provider/order.dart';
 import 'package:shop_project/provider/products.dart';
+import 'package:shop_project/screens/auth_screen.dart';
 import 'package:shop_project/screens/cart_screen.dart';
 import 'package:shop_project/screens/edit_products.dart';
 import 'package:shop_project/screens/order_screen.dart';
@@ -33,8 +34,9 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'My Shop',
-        home: const ProductOverviewScreen(),
+        home: const AuthScreen(),
         routes: {
+          ProductOverviewScreen.routeName: (context) => const ProductOverviewScreen(),
           ProductDetailsSreen.routeName: (context) => ProductDetailsSreen(),
           CartScreen.routeName: (context) => const CartScreen(),
           OrderScreen.routeName: (context) => const OrderScreen(),
