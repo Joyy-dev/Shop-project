@@ -1,6 +1,8 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shop_project/model/http_exception.dart';
+import 'package:shop_project/provider/auth.dart';
 
 enum Authmode {Signup, Login}
 class AuthScreen extends StatelessWidget {
@@ -17,7 +19,7 @@ class AuthScreen extends StatelessWidget {
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Colors.black, Colors.yellow],
-                begin: Alignment.bottomLeft,
+                begin: Alignment.bottomRight,
                 end: Alignment.topLeft,
                 stops: [0, 1]
               )
@@ -34,8 +36,8 @@ class AuthScreen extends StatelessWidget {
                   Flexible(
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 20),
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 94),
-                      transform: Matrix4.rotationZ(-8 * pi / 180)..translate(-10),
+                      padding: const EdgeInsets.symmetric(horizontal: 94, vertical: 20),
+                      transform: Matrix4.rotationZ(-8 * pi / 180)..translate(-10.0, 10.0, 0.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.black,
@@ -49,13 +51,14 @@ class AuthScreen extends StatelessWidget {
                       ),
                       child: const Text('My Shop!', 
                       style: TextStyle(
-                        fontSize: 20
+                        fontSize: 25,
+                        color: Colors.yellow,
                       ),),
                     )
                   ),
                   Flexible(
                     flex: deviceSize.width > 600 ? 2 : 1,
-                    child: AuthCard()
+                    child: const AuthCard()
                   )
                 ],
               ),
@@ -87,7 +90,25 @@ class _AuthCardState extends State<AuthCard> {
   var _isLoading = false;
   final _passwordController = TextEditingController();
 
-  void _submit () {
+  void _showErrorDialog (String message) {
+    showDialog(
+      context: context, 
+      builder: (context) => AlertDialog(
+        title: const Text('An error occurred'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            }, 
+            child: const Text('Okay'),
+          )
+        ],
+      )
+    );
+  }
+
+  Future<void> _submit () async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -95,10 +116,36 @@ class _AuthCardState extends State<AuthCard> {
     setState(() {
       _isLoading = true;
     });
+
+    try {
     if (_authmode == Authmode.Login) {
-      //
+      await Provider.of<Auth>(context, listen: false).login(
+        _authData['Email']!, 
+        _authData['Password']!
+      );
     } else {
-      //sign up user
+      await Provider.of<Auth>(context, listen: false).signUp(
+        _authData['Email']!, 
+        _authData['Password']!
+      );
+    }
+    } on HttpException catch(error) {
+      var errorMessage = 'Athentication Failed';
+      if (error.toString().contains('EMAIL_EXISTS')) {
+        errorMessage = 'This email address already exists in our database.';
+      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+        errorMessage = 'This email address was not found.';
+      } else if (error.toString().contains('INVALID_PASSWORD')) {
+        errorMessage = 'Invalid password.';
+      } else if (error.toString().contains('WEAK_PASSWORD')) {
+        errorMessage = 'Password should be at least 6 characters long.';
+      } else if (error.toString().contains('EMAIL_IN_USE')) {
+        errorMessage = 'This email address is already in use.';
+      }
+      _showErrorDialog(errorMessage);
+    } catch (error) {
+      var errorMessage = 'Could Not authenticate you. Please try again later!';
+      _showErrorDialog(errorMessage);
     }
     setState(() {
       _isLoading = false;
@@ -106,15 +153,9 @@ class _AuthCardState extends State<AuthCard> {
   }
 
   void _switchOffMode () {
-    if (_authmode == Authmode.Login) {
-      setState(() {
-        _authmode = Authmode.Signup;
-      });
-    } else {
-      setState(() {
-        _authmode = Authmode.Login;
-      });
-    }
+    setState(() {
+      _authmode = (_authmode == Authmode.Login) ? Authmode.Signup : Authmode.Login;
+    });  
   }
 
   @override
@@ -146,7 +187,7 @@ class _AuthCardState extends State<AuthCard> {
                     if (value == null || value.isEmpty) {
                       return 'Enter a valid email address';
                     }
-                    if (value.contains('@')) {
+                    if (!value.contains('@')) {
                       return 'Invalid Email Address';
                     }
                     return null;
@@ -184,8 +225,8 @@ class _AuthCardState extends State<AuthCard> {
                   decoration: const InputDecoration(labelText: 'Confirm Password'),
                   obscureText: true,
                   validator: _authmode == Authmode.Signup ? (value) {
-                    if (value !=_passwordController) {
-                      return 'Incorrect Password';
+                    if (value != _passwordController.text) {
+                      return 'Password do not match';
                     }
                     return null;
                   } : null
