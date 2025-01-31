@@ -18,7 +18,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<void> _authenticate(String email, String password, String urlSegment) async {
-    final url = 'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=AIzaSyA20dW7ttKijTIlaj12MZWnX8N4deLykss';
+    final url = 'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=key';
     try {
     final response = await http.post(
       Uri.parse(url),
@@ -48,4 +48,20 @@ class Auth with ChangeNotifier {
   Future<void> login(String email, String password) async {
     return _authenticate(email, password, 'signInWithPassword');
   }
+<<<<<<< HEAD
 }
+=======
+
+  String get token {
+    return _token;
+  }
+
+  String get userId {
+    return _userId;
+  }
+
+  String get expiringDate {
+    return _expiringDate;
+  }
+}
+>>>>>>> 6ad7d135d956d2df6e37d3d6e224c23b20807bb8

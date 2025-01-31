@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop_project/provider/auth.dart';
 import 'package:shop_project/provider/cart.dart';
 import 'package:shop_project/provider/order.dart';
+import 'package:shop_project/provider/product.dart';
 import 'package:shop_project/provider/products.dart';
 import 'package:shop_project/screens/auth_screen.dart';
 import 'package:shop_project/screens/cart_screen.dart';
@@ -24,21 +25,33 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => Products()
+          create: (context) => Auth()
         ),
+
+        ChangeNotifierProxyProvider<Auth, Products>(
+          create: (context) => Products('', []), 
+          update: (context, auth, previousProducts) => Products(
+            auth.token, 
+            previousProducts?.items.cast<Product>() ?? []
+          ),
+        ),
+        /*ChangeNotifierProxyProvider<Auth, Products>(
+          create: (context) => Products('', []),
+          update: (context, auth, previousProducts) => Products(
+            auth.token, 
+            previousProducts?.items == null ?? <Product>[]
+          )
+        ),*/
         ChangeNotifierProvider(
           create: (context) => Cart()
         ),
         ChangeNotifierProvider(
           create: (context) => Order()
-        ),
-        ChangeNotifierProvider(
-          create: (context) => Auth()
         )
       ],
-      child: MaterialApp(
+      child: Consumer<Auth>(builder: (context, auth, _) => MaterialApp(
         title: 'My Shop',
-        home: const AuthScreen(),
+        home: auth.isAuth ? const ProductOverviewScreen() : const AuthScreen(),
         routes: {
           ProductOverviewScreen.routeName: (context) => const ProductOverviewScreen(),
           ProductDetailsSreen.routeName: (context) => ProductDetailsSreen(),
@@ -48,6 +61,7 @@ class MyApp extends StatelessWidget {
           EditProducts.routeName: (context) => const EditProducts(),
         },
       ),
+      )
     );
   }
 }
