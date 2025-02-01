@@ -8,7 +8,9 @@ class Auth with ChangeNotifier {
   DateTime? _expiringDate;
   String? _userId;
 
-  bool get isAuth {}
+  bool get isAuth {
+    return _token != null;
+  }
 
   String? get token {
     if (_expiringDate != null && _expiringDate!.isAfter(DateTime.now()) && _token != null) {
@@ -48,20 +50,13 @@ class Auth with ChangeNotifier {
   Future<void> login(String email, String password) async {
     return _authenticate(email, password, 'signInWithPassword');
   }
-<<<<<<< HEAD
-}
-=======
 
-  String get token {
-    return _token;
-  }
 
-  String get userId {
+  String? get userId {
     return _userId;
   }
 
-  String get expiringDate {
+  DateTime? get expiringDate {
     return _expiringDate;
   }
 }
->>>>>>> 6ad7d135d956d2df6e37d3d6e224c23b20807bb8
