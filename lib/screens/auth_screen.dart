@@ -152,7 +152,7 @@ class _AuthCardState extends State<AuthCard> {
     });
   }
 
-  void _switchOffMode () {
+  void _switchAuthfMode () {
     setState(() {
       _authmode = (_authmode == Authmode.Login) ? Authmode.Signup : Authmode.Login;
     });  
@@ -253,7 +253,7 @@ class _AuthCardState extends State<AuthCard> {
                     foregroundColor: Colors.black,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap
                   ),
-                  onPressed: _switchOffMode, 
+                  onPressed: _switchAuthfMode, 
                   child: Text('${_authmode == Authmode.Login ? 'SIGN UP' : 'LOGIN'} INSTEAD')
                 )
               ],
