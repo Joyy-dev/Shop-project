@@ -11,6 +11,7 @@ import 'package:shop_project/screens/edit_products.dart';
 import 'package:shop_project/screens/order_screen.dart';
 import 'package:shop_project/screens/product_details_sreen.dart';
 import 'package:shop_project/screens/product_overview_screen.dart';
+import 'package:shop_project/screens/splash_screen.dart';
 import 'package:shop_project/screens/user_product_screen.dart';
 
 void main() {
@@ -50,9 +51,14 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<Auth>(builder: (context, auth, _) => MaterialApp(
         title: 'My Shop',
-        home: auth.isAuth ? const ProductOverviewScreen() : const AuthScreen(),
+        home: auth.isAuth ? const ProductOverviewScreen() : FutureBuilder(
+          future: auth.tryAutoLogin(), 
+          builder: (context, authResultSnapshot) => 
+          authResultSnapshot.connectionState == ConnectionState.waiting 
+          ? const SplashScreen() 
+          : const AuthScreen()
+        ),
         routes: {
-          ProductOverviewScreen.routeName: (context) => const ProductOverviewScreen(),
           ProductDetailsSreen.routeName: (context) => ProductDetailsSreen(),
           CartScreen.routeName: (context) => const CartScreen(),
           OrderScreen.routeName: (context) => const OrderScreen(),
