@@ -19,6 +19,10 @@ class Auth with ChangeNotifier {
     return null;
   }
 
+  String? get userId {
+    return _userId;
+  }
+
   Future<void> _authenticate(String email, String password, String urlSegment) async {
     final url = 'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=key';
     try {
@@ -50,11 +54,7 @@ class Auth with ChangeNotifier {
   Future<void> login(String email, String password) async {
     return _authenticate(email, password, 'signInWithPassword');
   }
-
-
-  String? get userId {
-    return _userId;
-  }
+  
 
   DateTime? get expiringDate {
     return _expiringDate;

@@ -69,8 +69,9 @@ class Products with ChangeNotifier{
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  Future<void> fetchAndSetProduct () async {
-    var url = 'https://shop-app-3e5ac-default-rtdb.firebaseio.com/products.json?auth=$authToken';
+  Future<void> fetchAndSetProduct ([bool filterByUser = false]) async {
+    final filterString = filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
+    var url = 'https://shop-app-3e5ac-default-rtdb.firebaseio.com/products.json?auth=$authToken&$filterString';
     try {
     final response = await http.get(Uri.parse(url));
     final extractedData = json.decode(response.body) as Map<String, dynamic>?;
@@ -109,7 +110,8 @@ class Products with ChangeNotifier{
         'title': product.title,
         'description': product.description,
         'price': product.price,
-        'imageURL': product.imageURL
+        'imageURL': product.imageURL,
+        'creatorId': userId
       }
     )
   );
